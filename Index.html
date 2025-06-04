@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>IA Inteligente</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-white min-h-screen flex flex-col items-center justify-center p-4">
+
+  <h1 class="text-4xl font-bold mb-6">IA Inteligente</h1>
+
+  <div class="w-full max-w-md space-y-4">
+    <input id="question" type="text" placeholder="Faça uma pergunta..." 
+           class="w-full p-3 rounded-lg text-black" />
+    <button onclick="askAI()" 
+            class="w-full bg-blue-600 hover:bg-blue-700 p-3 rounded-lg">Perguntar</button>
+
+    <div id="response" class="bg-gray-800 p-4 rounded-lg min-h-[100px]"></div>
+
+    <div id="teachSection" class="hidden space-y-2">
+      <input id="newAnswer" type="text" placeholder="Ensine a resposta..." 
+             class="w-full p-3 rounded-lg text-black" />
+      <button onclick="teachAI()" 
+              class="w-full bg-green-600 hover:bg-green-700 p-3 rounded-lg">Ensinar IA</button>
+    </div>
+  </div>
+
+  <script>
+    let knowledge = JSON.parse(localStorage.getItem('aiKnowledge')) || {};
+
+    function saveKnowledge() {
+      localStorage.setItem('aiKnowledge', JSON.stringify(knowledge));
+    }
+
+    function askAI() {
+      const question = document.getElementById('question').value.trim().toLowerCase();
+      const responseDiv = document.getElementById('response');
+      const teachSection = document.getElementById('teachSection');
+
+      if (!question) {
+        responseDiv.textContent = 'Por favor, faça uma pergunta.';
+        teachSection.classList.add('hidden');
+        return;
+      }
+
+      if (knowledge[question]) {
+        responseDiv.textContent = 'IA: ' + knowledge[question];
+        teachSection.classList.add('hidden');
+      } else {
+        responseDiv.textContent = 'IA: Não sei responder isso ainda. Você quer me ensinar?';
+        teachSection.classList.remove('hidden');
+      }
+    }
+
+    function teachAI() {
+      const question = document.getElementById('question').value.trim().toLowerCase();
+      const newAnswer = document.getElementById('newAnswer').value.trim();
+
+      if (!newAnswer) {
+        alert('Por favor, insira uma resposta para ensinar.');
+        return;
+      }
+
+      knowledge[question] = newAnswer;
+      saveKnowledge();
+
+      document.getElementById('response').textContent = 'IA: Obrigado por me ensinar! Agora sei responder isso.';
+      document.getElementById('teachSection').classList.add('hidden');
+      document.getElementById('newAnswer').value = '';
+    }
+  </script>
+
+</body>
+</html>
